@@ -1,0 +1,42 @@
+#!/bin/bash
+#Building variables
+echo "${GIT_BRANCH}"
+branchname=$(echo $GIT_BRANCH | cut -f2 -d"/")
+if [[ "$branchname" = "master" ]]; then
+namespace="default"
+else
+namespace=${branchname}
+fi
+echo "${namespace}"
+echo "${GIT_URL}"
+appname="person"
+echo "${appname}"
+deploymentname="${appname}-deployment"
+echo "${deploymentname}"
+servicename="${appname}-service"
+
+# Specifing image name
+IMAGE_NAME="424501896171.dkr.ecr.us-east-1.amazonaws.com/springboot-aamc:${BUILD_NUMBER}"
+
+
+#Verifying if deployment already exists
+VAR=$(kubectl get deployment ${deploymentname} --namespace=${namespace} | tail -n +2 | awk '{print $1}')
+echo ${VAR}
+if [[ "$VAR" = "${deploymentname}" ]]; then 
+echo "Deployment ${deploymentname} exists, performing a rolling update"
+sed -i "s|\$appname|${appname}|g" ${WORKSPACE}/deployment.yaml
+sed -i "s|\$deploymentname|${deploymentname}|g" ${WORKSPACE}/deployment.yaml
+sed -i "s|\$IMAGE_NAME|${IMAGE_NAME}|g" ${WORKSPACE}/deployment.yaml
+kubectl apply -f ${WORKSPACE}/deployment.yaml --namespace=${namespace}
+else
+echo "Deployment ${deploymentname} doesnt exist, Creating now"
+sed -i "s|\$appname|${appname}|g" ${WORKSPACE}/deployment.yaml
+sed -i "s|\$deploymentname|${deploymentname}|g" ${WORKSPACE}/deployment.yaml
+sed -i "s|\$IMAGE_NAME|${IMAGE_NAME}|g" ${WORKSPACE}/deployment.yaml
+sed -i "s|\$appname|${appname}|g" ${WORKSPACE}/service.yaml
+sed -i "s|\$servicename|${servicename}|g" ${WORKSPACE}/service.yaml
+sed -i "s|\$deploymentname|${deploymentname}|g" ${WORKSPACE}/service.yaml
+kubectl get ns ${namespace} || kubectl create ns ${namespace}
+kubectl create -f ${WORKSPACE}/deployment.yaml --namespace=${namespace}
+kubectl create -f ${WORKSPACE}/service.yaml --namespace=${namespace}
+fi

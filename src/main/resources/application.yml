@@ -1,0 +1,37 @@
+spring:
+  profiles:
+    active: development
+server:
+  port: 8080
+---
+spring:
+  profiles: test
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
+---
+spring:
+  profiles: development
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    #url: jdbc:mysql://localhost:3306/person?useSSL=false
+    username: postgres
+    password: password
+  #cache:
+   # type: redis
+    #cache-names: personCache,allPersonCache
+    #redis:
+     # cache-null-values: false
+     # time-to-live: 600000
+     # use-key-prefix: true  
+  #redis:
+   # host: localhost
+    #port: 6379
+    
+---
+spring:
+  profiles: docker
+  datasource:
+    url: jdbc:postgresql://localhost:5432
+    #url: jdbc:mysql://mysql:3306/person?useSSL=false
+    username: postgres
+    password: password
