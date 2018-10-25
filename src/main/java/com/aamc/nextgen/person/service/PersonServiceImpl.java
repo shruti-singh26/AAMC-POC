@@ -21,41 +21,35 @@ public class PersonServiceImpl implements PersonService{
 	@Override
 	@Cacheable
 	public Person getPersonById(Long id) {
-		System.out.println("--- Inside getPersonById() ---");
 		return personDao.getPersonById(id);
 	}
 	
 	@Override
 	public Person getPersonByEmail(String email) {
-		System.out.println("--- Inside getPersonByEmail() ---");
 		return personDao.getPersonByEmail(email);
 	}
 
 	@Override
 	@Cacheable
 	public List<Person> getAllPersons() {
-		System.out.println("--- Inside getAllPersons() ---");
 		return personDao.getAllPersons();
 	}
 
 	@Override
 	@CacheEvict(allEntries=true)
 	public Person createPerson(Person person) {
-		System.out.println("--- Inside createPerson() ---");
 		return personDao.createPerson(person);
 	}
 	
 	@Override
 	@CacheEvict(allEntries=true)
 	public Person updatePerson(Person person) {
-		System.out.println("--- Inside updatePerson() ---");
 		return personDao.updatePerson(person);
 	}
 	
 	@Override
 	@CacheEvict(allEntries=true)
 	public boolean deletePerson(Long id) {
-		System.out.println("--- Inside deletePerson() ---");
 		return personDao.deletePerson(id);
 	}
 
